@@ -1,6 +1,6 @@
-# file_atomic_write.cr
+# atomic_write.cr
 
-Extends/Overrides `File` to provide `atomic_write()` and `atomic_append()`.
+Extends`File` to provide `atomic_write()`.
 
 An atomic write creates a new file at a temporary path. It then writes the new
 file contents to that file. Lastly it renames it to the original path. This dramatically
@@ -14,14 +14,14 @@ Add this to your application's `shard.yml`:
 ```yaml
 dependencies:
   file_atomic_write:
-    github: chris-huxtable/file_atomic_write.cr
+    github: chris-huxtable/atomic_write.cr
 ```
 
 
 ## Usage
 
 ```crystal
-require "file_atomic_write"
+require "atomic_write"
 ```
 
 Atomic write:
@@ -39,7 +39,7 @@ File.atomic_write("some/path", append: true) { |fd| fd << "hello world" }
 
 ## Contributing
 
-1. Fork it ( https://github.com/chris-huxtable/file_atomic_write.cr/fork )
+1. Fork it ( https://github.com/chris-huxtable/atomic_write.cr/fork )
 2. Create your feature branch (git checkout -b my-new-feature)
 3. Commit your changes (git commit -am 'Add some feature')
 4. Push to the branch (git push origin my-new-feature)

@@ -15,7 +15,7 @@
 require "spec"
 require "tempfile"
 
-require "../src/file_atomic_write"
+require "../src/atomic_write"
 
 private def tempname()
   time = Time.now.to_s("%Y%m%d")

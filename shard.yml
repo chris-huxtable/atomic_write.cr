@@ -1,5 +1,5 @@
-name: file_atomic_write
-version: 0.1.1
+name: atomic_write
+version: 0.1.2
 
 authors:
   - Chris Huxtable <chris@huxtable.ca>
