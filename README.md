@@ -33,7 +33,7 @@ File.atomic_write("some/path") { |fd| fd << "hello world" }
 Atomic append:
 
 ```crystal
-File.atomic_append("some/path") { |fd| fd << "hello world" }
+File.atomic_write("some/path", append: true) { |fd| fd << "hello world" }
 ```
 
 
