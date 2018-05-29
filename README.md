@@ -1,4 +1,7 @@
 # atomic_write.cr
+[![Docs](https://img.shields.io/badge/docs-available-brightgreen.svg)](https://chris-huxtable.github.io/atomic_write.cr/)
+[![GitHub release](https://img.shields.io/github/release/chris-huxtable/atomic_write.cr.svg)](https://github.com/chris-huxtable/atomic_write.cr/releases)
+[![Build Status](https://travis-ci.org/chris-huxtable/atomic_write.cr.svg?branch=master)](https://travis-ci.org/chris-huxtable/atomic_write.cr)
 
 Extends`File` to provide `atomic_write()`.
 
