@@ -40,7 +40,7 @@ class File
       raise ex
     end
 
-    if ( exists?(path) )
+    if exists?(path)
       stat = stat(path)
       chmod(atomic_path, stat.mode)
       chown(atomic_path, stat.uid, stat.gid)
