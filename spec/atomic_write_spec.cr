@@ -17,14 +17,13 @@ require "tempfile"
 
 require "../src/atomic_write"
 
-private def tempname()
+private def tempname
   time = Time.now.to_s("%Y%m%d")
   rand = Random.rand(0x100000000).to_s(36)
   File.join("/tmp", "#{time}-#{Process.pid}-#{rand}")
 end
 
 describe File do
-
   describe "atomic_write" do
     it "writes atomically" do
       filename = tempname()
@@ -49,5 +48,4 @@ describe File do
       end
     end
   end
-
 end
