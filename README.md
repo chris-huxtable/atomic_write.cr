@@ -3,7 +3,7 @@
 [![GitHub release](https://img.shields.io/github/release/chris-huxtable/atomic_write.cr.svg)](https://github.com/chris-huxtable/atomic_write.cr/releases)
 [![Build Status](https://travis-ci.org/chris-huxtable/atomic_write.cr.svg?branch=master)](https://travis-ci.org/chris-huxtable/atomic_write.cr)
 
-Extends`File` to provide `atomic_write()`.
+Extends `File` to provide `atomic_write()`.
 
 An atomic write creates a new file at a temporary path. It then writes the new
 file contents to that file. Lastly it renames it to the original path. This dramatically
