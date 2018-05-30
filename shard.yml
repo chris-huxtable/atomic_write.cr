@@ -4,6 +4,9 @@ version: 0.1.2
 authors:
   - Chris Huxtable <chris@huxtable.ca>
 
+description: |
+  Extends `File` to provide `atomic_write()`
+
 crystal: 0.24.2
 
 license: ISC
