@@ -63,4 +63,9 @@ class File
       end
     end
   end
+
+  # Ensures the copied file is written completely or not at all preventing corruption of the file.
+  def self.atomic_copy(src : String, dst : String, perm = DEFAULT_CREATE_MODE) : Nil
+    open(src, "r") { |src_fd| atomic_write(dst, src_fd, perm) }
+  end
 end

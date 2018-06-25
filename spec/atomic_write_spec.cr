@@ -47,5 +47,20 @@ describe File do
         File.delete(filename)
       end
     end
+
+    it "copies atomically" do
+      filename = tempname()
+      copyname = filename + ".copy"
+      begin
+        File.atomic_write(filename) { |fd| fd << "hello" }
+        File.read(filename).should eq("hello")
+
+        File.atomic_copy(filename, copyname)
+        File.read(copyname).should eq("hello")
+      ensure
+        File.delete(filename)
+        File.delete(copyname)
+      end
+    end
   end
 end
