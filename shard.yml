@@ -1,5 +1,6 @@
 name: atomic_write
-version: 0.1.3
+version: 0.1.4
+license: ISC
 
 crystal: 0.25.1
 
@@ -8,5 +9,3 @@ authors:
 
 description: |
   Extends `File` to provide `atomic_write()`
-
-license: ISC
