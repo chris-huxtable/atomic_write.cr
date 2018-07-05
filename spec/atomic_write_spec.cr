@@ -17,7 +17,6 @@ require "tempfile"
 
 require "../src/atomic_write"
 
-
 describe File do
   describe "atomic_write" do
     it "writes atomically" do
