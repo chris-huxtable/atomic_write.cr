@@ -39,6 +39,12 @@ Atomic append:
 File.atomic_write("some/path", append: true) { |fd| fd << "hello world" }
 ```
 
+Atomic copy:
+
+```crystal
+File.atomic_copy("some/src/path", "some/dst/path")
+```
+
 
 ## Contributing
 
