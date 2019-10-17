@@ -16,7 +16,7 @@ Add this to your application's `shard.yml`:
 
 ```yaml
 dependencies:
-  file_atomic_write:
+  atomic_write:
     github: chris-huxtable/atomic_write.cr
 ```
 
