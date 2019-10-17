@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="generator" content="Crystal Docs 0.30.1">
+
+
+<link href="css/style.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" src="js/doc.js"></script>
+<script type="text/javascript">
+  CrystalDoc.base_path = "";
+</script>
+
+  <meta id="repository-name" content="github.com/chris-huxtable/atomic_write.cr">
+  <title>File - github.com/chris-huxtable/atomic_write.cr</title>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-header">
+    <div class="search-box">
+      <input type="search" class="search-input" placeholder="Search..." spellcheck="false" aria-label="Search">
+    </div>
+
+    <div class="repository-links">
+      <a href="index.html">README</a>
+    </div>
+  </div>
+
+  <div class="search-results" class="hidden">
+    <ul class="search-list"></ul>
+  </div>
+
+  <div class="types-list">
+    <ul>
+  
+  <li class=" current" data-id="github.com/chris-huxtable/atomic_write.cr/File" data-name="file">
+      <a href="File.html">File</a>
+      
+    </li>
+  
+</ul>
+
+  </div>
+</div>
+
+
+<div class="main-content">
+<h1 class="type-name">
+
+  <span class="kind">class</span> File
+
+</h1>
+
+
+  <ul class="superclass-hierarchy"><li class="superclass"><a href="File.html">File</a></li><li class="superclass">IO::FileDescriptor</li><li class="superclass">IO</li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
+
+
+
+
+  <h2>Overview</h2>
+
+  <p>A <code><a href="File.html">File</a></code> instance represents a file entry in the local file system and allows using it as an <code>IO</code>.</p>
+
+<pre><code>file <span class="o">=</span> <span class="t">File</span>.<span class="k">new</span>(<span class="s">&quot;path/to/file&quot;</span>)
+content <span class="o">=</span> file.gets_to_end
+file.close
+
+<span class="c"># Implicit close with `open`</span>
+content <span class="o">=</span> <span class="t">File</span>.open(<span class="s">&quot;path/to/file&quot;</span>) <span class="k">do</span> <span class="o">|</span>file<span class="o">|</span>
+  file.gets_to_end
+<span class="k">end</span>
+
+<span class="c"># Shortcut:</span>
+content <span class="o">=</span> <span class="t">File</span>.read(<span class="s">&quot;path/to/file&quot;</span>)</code></pre>
+
+<h2>Temporary Files</h2>
+
+<p>Every tempfile is operated as a <code><a href="File.html">File</a></code>, including initializing, reading and writing.</p>
+
+<pre><code>tempfile <span class="o">=</span> <span class="t">File</span>.tempfile(<span class="s">&quot;foo&quot;</span>)
+
+<span class="t">File</span>.size(tempfile.path)                   <span class="c"># =&gt; 6</span>
+<span class="t">File</span>.info(tempfile.path).modification_time <span class="c"># =&gt; 2015-10-20 13:11:12 UTC</span>
+<span class="t">File</span>.exists?(tempfile.path)                <span class="c"># =&gt; true</span>
+<span class="t">File</span>.read_lines(tempfile.path)             <span class="c"># =&gt; [&quot;foobar&quot;]</span></code></pre>
+
+<p>Files created from <code>tempfile</code> are stored in a directory that handles
+temporary files (<code>Dir.tempdir</code>):</p>
+
+<pre><code><span class="t">File</span>.tempfile(<span class="s">&quot;foo&quot;</span>).path <span class="c"># =&gt; &quot;/tmp/foo.ulBCPS&quot;</span></code></pre>
+
+<p>It is encouraged to delete a tempfile after using it, which
+ensures they are not left behind in your filesystem until garbage collected.</p>
+
+<pre><code>tempfile <span class="o">=</span> <span class="t">File</span>.tempfile(<span class="s">&quot;foo&quot;</span>)
+tempfile.delete</code></pre>
+
+
+
+
+
+  <h2>Included Modules</h2>
+  <ul class="other-types-list">
+  
+    <li class="other-type">Crystal::System::File</li>
+  
+  </ul>
+
+
+
+
+
+
+
+
+
+
+  <h2>Defined in:</h2>
+  
+    
+      <a href="https://github.com/chris-huxtable/atomic_write.cr/blob/f0bd3ee549a8192803bde4321a734f9bc7c14aeb/src/atomic_write.cr#L15" target="_blank">
+        atomic_write.cr
+      </a>
+    
+    <br/>
+  
+
+
+
+
+
+
+
+  <h2>Class Method Summary</h2>
+  <ul class="list-summary">
+    
+      <li class="entry-summary">
+        <a href="#atomic_copy(src:String,dst:String,perm=DEFAULT_CREATE_PERMISSIONS):Nil-class-method" class="signature"><strong>.atomic_copy</strong>(src : String, dst : String, perm = <span class="t">DEFAULT_CREATE_PERMISSIONS</span>) : Nil</a>
+        
+          <div class="summary"><p>Ensures the copied file is written completely or not at all preventing corruption of the file.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#atomic_write(path:String,perm=DEFAULT_CREATE_PERMISSIONS,encoding=nil,invalid=nil,*,append:Bool=false,&block:IO::FileDescriptor-%3ENil):Nil-class-method" class="signature"><strong>.atomic_write</strong>(path : String, perm = <span class="t">DEFAULT_CREATE_PERMISSIONS</span>, encoding = <span class="n">nil</span>, invalid = <span class="n">nil</span>, *, append : Bool = <span class="n">false</span>, &block : IO::FileDescriptor -> Nil) : Nil</a>
+        
+          <div class="summary"><p>Ensures the content written to the file descriptor is written completely or not at all preventing corruption of the file.</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#atomic_write(path:String,content,perm=DEFAULT_CREATE_PERMISSIONS,encoding=nil,invalid=nil):Nil-class-method" class="signature"><strong>.atomic_write</strong>(path : String, content, perm = <span class="t">DEFAULT_CREATE_PERMISSIONS</span>, encoding = <span class="n">nil</span>, invalid = <span class="n">nil</span>) : Nil</a>
+        
+          <div class="summary"><p>Writes the provided content completely or not at all preventing file corruption.</p></div>
+        
+      </li>
+    
+  </ul>
+
+
+
+
+
+
+
+<div class="methods-inherited">
+  
+    
+
+
+    
+
+
+    
+
+
+  
+    
+
+
+    
+
+
+    
+
+
+  
+    
+
+
+    
+
+
+    
+
+
+  
+    
+
+
+    
+
+
+    
+
+
+  
+    
+
+
+    
+
+
+    
+
+
+  
+    
+
+
+    
+
+
+    
+
+
+  
+    
+
+
+    
+
+
+    
+
+
+  
+    
+
+
+    
+
+
+    
+
+
+  
+</div>
+
+
+
+
+  <h2>Class Method Detail</h2>
+  
+    <div class="entry-detail" id="atomic_copy(src:String,dst:String,perm=DEFAULT_CREATE_PERMISSIONS):Nil-class-method">
+      <div class="signature">
+        
+        def self.<strong>atomic_copy</strong>(src : String, dst : String, perm = <span class="t">DEFAULT_CREATE_PERMISSIONS</span>) : Nil
+
+        <a class="method-permalink" href="#atomic_copy(src:String,dst:String,perm=DEFAULT_CREATE_PERMISSIONS):Nil-class-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Ensures the copied file is written completely or not at all preventing corruption of the file.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/chris-huxtable/atomic_write.cr/blob/f0bd3ee549a8192803bde4321a734f9bc7c14aeb/src/atomic_write.cr#L68" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="atomic_write(path:String,perm=DEFAULT_CREATE_PERMISSIONS,encoding=nil,invalid=nil,*,append:Bool=false,&amp;block:IO::FileDescriptor-&gt;Nil):Nil-class-method">
+      <div class="signature">
+        
+        def self.<strong>atomic_write</strong>(path : String, perm = <span class="t">DEFAULT_CREATE_PERMISSIONS</span>, encoding = <span class="n">nil</span>, invalid = <span class="n">nil</span>, *, append : Bool = <span class="n">false</span>, &block : IO::FileDescriptor -> Nil) : Nil
+
+        <a class="method-permalink" href="#atomic_write(path:String,perm=DEFAULT_CREATE_PERMISSIONS,encoding=nil,invalid=nil,*,append:Bool=false,&block:IO::FileDescriptor-%3ENil):Nil-class-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Ensures the content written to the file descriptor is written completely or not at all
+preventing corruption of the file.</p>
+
+<p>If a file is being created, its initial permissions may be set using the <em>perm</em> parameter.
+Then the given block will be passed the opened file descriptor as an argument, the file will
+be automatically closed and saved when the block returns.</p>
+
+<p>This is done by saving the new contents at temporary path. When the new content is
+successfully written the temporary path is changed to the provided path ensuring the data is
+not corrupted. If the write fails the temporary file is deleted.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/chris-huxtable/atomic_write.cr/blob/f0bd3ee549a8192803bde4321a734f9bc7c14aeb/src/atomic_write.cr#L26" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="atomic_write(path:String,content,perm=DEFAULT_CREATE_PERMISSIONS,encoding=nil,invalid=nil):Nil-class-method">
+      <div class="signature">
+        
+        def self.<strong>atomic_write</strong>(path : String, content, perm = <span class="t">DEFAULT_CREATE_PERMISSIONS</span>, encoding = <span class="n">nil</span>, invalid = <span class="n">nil</span>) : Nil
+
+        <a class="method-permalink" href="#atomic_write(path:String,content,perm=DEFAULT_CREATE_PERMISSIONS,encoding=nil,invalid=nil):Nil-class-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Writes the provided content completely or not at all preventing file corruption.</p>
+
+<p>This is preformed in the same way as <code><a href="File.html#atomic_write(path:String,perm=DEFAULT_CREATE_PERMISSIONS,encoding=nil,invalid=nil,*,append:Bool=false,&block:IO::FileDescriptor-%3ENil):Nil-class-method">.atomic_write</a></code> with block.</p>
+
+<p><span class="flag purple">NOTE</span>  If the content is a <code>Slice(UInt8)</code>, those bytes will be written.
+If it's an <code>IO</code>, all bytes from the <code>IO</code> will be written.
+Otherwise, the string representation of <em>content</em> will be written
+(the result of invoking <code>to_s</code> on <em>content</em>).</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/chris-huxtable/atomic_write.cr/blob/f0bd3ee549a8192803bde4321a734f9bc7c14aeb/src/atomic_write.cr#L57" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+
+
+
+
+
+
+</div>
+
+</body>
+</html>
