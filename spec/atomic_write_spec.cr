@@ -13,14 +13,13 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 require "spec"
-require "tempfile"
 
 require "../src/atomic_write"
 
 describe File do
   describe "atomic_write" do
     it "writes atomically" do
-      filename = Tempfile.tempname
+      filename = File.tempfile("atomic_write").path
       begin
         File.atomic_write(filename) { |fd| fd << "hello" }
         File.read(filename).should eq("hello")
@@ -30,7 +29,7 @@ describe File do
     end
 
     it "appends atomically" do
-      filename = Tempfile.tempname
+      filename = File.tempfile("atomic_write").path
       begin
         File.atomic_write(filename) { |fd| fd << "hello" }
         File.read(filename).should eq("hello")
@@ -43,7 +42,7 @@ describe File do
     end
 
     it "copies atomically" do
-      filename = Tempfile.tempname
+      filename = File.tempfile("atomic_write").path
       copyname = filename + ".copy"
       begin
         File.atomic_write(filename) { |fd| fd << "hello" }
