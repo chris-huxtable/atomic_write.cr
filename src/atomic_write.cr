@@ -12,8 +12,6 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-require "file_utils"
-
 
 class File
 
@@ -27,28 +25,27 @@ class File
   # This is done by saving the new contents at temporary path. When the new content is
   # successfully written the temporary path is changed to the provided path ensuring the data is
   # not corrupted. If the write fails the temporary file is deleted.
-  def self.atomic_write(path : String, perm = DEFAULT_CREATE_MODE, encoding = nil, invalid = nil, *, append : Bool = false, &block : IO::FileDescriptor -> Nil) : Bool
-    atomic_path = new_atomic_path(path)
-    success_flag = false
+  def self.atomic_write(path : String, perm = DEFAULT_CREATE_MODE, encoding = nil, invalid = nil, *, append : Bool = false, &block : IO::FileDescriptor -> Nil) : Nil
+    atomic_path = "#{path}.atomic_#{Random::Secure.urlsafe_base64(16)}"
+    raise "Failed to generate temporary path, exists" if exists?(atomic_path)
 
-    begin
-      open(atomic_path, "w", perm, encoding, invalid) do |fd|
-        fd.flock_exclusive() do
-          open(path, "r") { |src| IO.copy(src, fd) } if append
-          yield(fd)
-          fd.flush()
-          success_flag = true
-        end
+    open(atomic_path, "w", perm, encoding, invalid) do |fd|
+      fd.flock_exclusive do
+        open(path, "r") { |src| IO.copy(src, fd) } if append
+        yield(fd)
+        fd.flush
       end
-    ensure
-      if ( success_flag )
-        atomic_install(atomic_path, path)
-      else
-        delete(atomic_path)
-      end
+    rescue ex
+      delete(atomic_path)
+      raise ex
     end
 
-    return success_flag
+    if ( exists?(path) )
+      stat = stat(path)
+      chmod(atomic_path, stat.mode)
+      chown(atomic_path, stat.uid, stat.gid)
+    end
+    rename(atomic_path, path)
   end
 
   # Writes the provided content completely or not at all preventing file corruption.
@@ -59,7 +56,7 @@ class File
   # If it's an `IO`, all bytes from the `IO` will be written.
   # Otherwise, the string representation of *content* will be written
   # (the result of invoking `to_s` on *content*).
-  def self.atomic_write(path : String, content, perm = DEFAULT_CREATE_MODE, encoding = nil, invalid = nil) : Bool
+  def self.atomic_write(path : String, content, perm = DEFAULT_CREATE_MODE, encoding = nil, invalid = nil) : Nil
     atomic_write(path, perm, encoding, invalid) do |fd|
       case content
       when Bytes then fd.write(content)
@@ -67,29 +64,6 @@ class File
       else            fd.print(content)
       end
     end
-  end
-
-  # :nodoc:
-  protected def self.atomic_install(atomic_path : String, dest_path : String) : Nil
-    if ( exists?(dest_path) )
-      stat = stat(dest_path)
-      chmod(atomic_path, stat.mode)
-      chown(atomic_path, stat.uid, stat.gid)
-    end
-    rename(atomic_path, dest_path)
-  end
-
-  # :nodoc:
-  protected def self.new_atomic_path(path : String, length : Int::Unsigned = 16_u8, limit : Int::Unsigned = 8_u8) : String
-    atomic_path = "#{path}.atomic_#{Random::Secure.urlsafe_base64(length)}"
-
-    while ( exists?(atomic_path) )
-      raise "Failed to generate temporary path." if ( limit <= 0 )
-      atomic_path = "#{path}.atomic_#{Random::Secure.urlsafe_base64(length)}"
-      limit -= 1
-    end
-
-    return atomic_path
   end
 
 end
