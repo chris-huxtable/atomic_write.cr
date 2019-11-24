@@ -12,8 +12,11 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-
 class File
+  # FIXME: Remove support for 0.24.2 and earlier
+  {% if compare_versions(Crystal::VERSION, "0.25.0") == -1 %}
+    DEFAULT_CREATE_PERMISSIONS = DEFAULT_CREATE_MODE
+  {% end %}
 
   # Ensures the content written to the file descriptor is written completely or not at all
   # preventing corruption of the file.
@@ -25,7 +28,7 @@ class File
   # This is done by saving the new contents at temporary path. When the new content is
   # successfully written the temporary path is changed to the provided path ensuring the data is
   # not corrupted. If the write fails the temporary file is deleted.
-  def self.atomic_write(path : String, perm = DEFAULT_CREATE_MODE, encoding = nil, invalid = nil, *, append : Bool = false, &block : IO::FileDescriptor -> Nil) : Nil
+  def self.atomic_write(path : String, perm = DEFAULT_CREATE_PERMISSIONS, encoding = nil, invalid = nil, *, append : Bool = false, &block : IO::FileDescriptor -> Nil) : Nil
     atomic_path = "#{path}.atomic_#{Random::Secure.urlsafe_base64(16)}"
     raise "Failed to generate temporary path, exists" if exists?(atomic_path)
 
@@ -40,11 +43,20 @@ class File
       raise ex
     end
 
-    if ( exists?(path) )
-      stat = stat(path)
-      chmod(atomic_path, stat.mode)
-      chown(atomic_path, stat.uid, stat.gid)
-    end
+    # FIXME: Remove support for 0.24.2 and earlier
+    {% if compare_versions(Crystal::VERSION, "0.25.0") == -1 %}
+      if exists?(path)
+        info = stat(path)
+        chmod(atomic_path, info.mode)
+        chown(atomic_path, info.uid, info.gid)
+      end
+    {% else %}
+      if info = info?(path)
+        chmod(atomic_path, info.permissions)
+        chown(atomic_path, info.owner, info.group)
+      end
+    {% end %}
+
     rename(atomic_path, path)
   end
 
@@ -56,7 +68,7 @@ class File
   # If it's an `IO`, all bytes from the `IO` will be written.
   # Otherwise, the string representation of *content* will be written
   # (the result of invoking `to_s` on *content*).
-  def self.atomic_write(path : String, content, perm = DEFAULT_CREATE_MODE, encoding = nil, invalid = nil) : Nil
+  def self.atomic_write(path : String, content, perm = DEFAULT_CREATE_PERMISSIONS, encoding = nil, invalid = nil) : Nil
     atomic_write(path, perm, encoding, invalid) do |fd|
       case content
       when Bytes then fd.write(content)
@@ -66,4 +78,8 @@ class File
     end
   end
 
+  # Ensures the copied file is written completely or not at all preventing corruption of the file.
+  def self.atomic_copy(src : String, dst : String, perm = DEFAULT_CREATE_PERMISSIONS) : Nil
+    open(src, "r") { |src_fd| atomic_write(dst, src_fd, perm) }
+  end
 end
