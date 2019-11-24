@@ -12,21 +12,42 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-require "./spec_helper"
+require "spec"
+require "tempfile"
 
+require "../src/file_atomic_write"
 
-private ATOMIC_TEST = "/tmp/file_atomic_write_spec.test"
+private def tempname()
+  time = Time.now.to_s("%Y%m%d")
+  rand = Random.rand(0x100000000).to_s(36)
+  File.join("/tmp", "#{time}-#{Process.pid}-#{rand}")
+end
 
 describe File do
 
-	it "atomic_write and atomic_append" do
-		File.atomic_write(ATOMIC_TEST) { |fd| fd << "hello" }
-		File.read(ATOMIC_TEST).should eq("hello")
+  describe "atomic_write" do
+    it "writes atomically" do
+      filename = tempname()
+      begin
+        File.atomic_write(filename) { |fd| fd << "hello" }
+        File.read(filename).should eq("hello")
+      ensure
+        File.delete(filename)
+      end
+    end
 
-		File.atomic_append(ATOMIC_TEST) { |fd| fd << " world" }
-		File.read(ATOMIC_TEST).should eq("hello world")
+    it "appends atomically" do
+      filename = tempname()
+      begin
+        File.atomic_write(filename) { |fd| fd << "hello" }
+        File.read(filename).should eq("hello")
 
-		File.delete(ATOMIC_TEST)
-	end
+        File.atomic_write(filename, append: true) { |fd| fd << " world" }
+        File.read(filename).should eq("hello world")
+      ensure
+        File.delete(filename)
+      end
+    end
+  end
 
 end
