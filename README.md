@@ -16,7 +16,7 @@ Add this to your application's `shard.yml`:
 
 ```yaml
 dependencies:
-  file_atomic_write:
+  atomic_write:
     github: chris-huxtable/atomic_write.cr
 ```
 
@@ -37,6 +37,12 @@ Atomic append:
 
 ```crystal
 File.atomic_write("some/path", append: true) { |fd| fd << "hello world" }
+```
+
+Atomic copy:
+
+```crystal
+File.atomic_copy("some/src/path", "some/dst/path")
 ```
 
 

@@ -13,7 +13,6 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 class File
-
   # Ensures the content written to the file descriptor is written completely or not at all
   # preventing corruption of the file.
   #
