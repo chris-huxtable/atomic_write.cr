@@ -17,16 +17,11 @@ require "tempfile"
 
 require "../src/atomic_write"
 
-private def tempname
-  time = Time.now.to_s("%Y%m%d")
-  rand = Random.rand(0x100000000).to_s(36)
-  File.join("/tmp", "#{time}-#{Process.pid}-#{rand}")
-end
 
 describe File do
   describe "atomic_write" do
     it "writes atomically" do
-      filename = tempname()
+      filename = Tempfile.tempname
       begin
         File.atomic_write(filename) { |fd| fd << "hello" }
         File.read(filename).should eq("hello")
@@ -36,7 +31,7 @@ describe File do
     end
 
     it "appends atomically" do
-      filename = tempname()
+      filename = Tempfile.tempname
       begin
         File.atomic_write(filename) { |fd| fd << "hello" }
         File.read(filename).should eq("hello")
@@ -49,7 +44,7 @@ describe File do
     end
 
     it "copies atomically" do
-      filename = tempname()
+      filename = Tempfile.tempname
       copyname = filename + ".copy"
       begin
         File.atomic_write(filename) { |fd| fd << "hello" }

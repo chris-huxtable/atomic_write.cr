@@ -13,10 +13,6 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 class File
-  # FIXME: Remove support for 0.24.2 and earlier
-  {% if compare_versions(Crystal::VERSION, "0.25.0") == -1 %}
-    DEFAULT_CREATE_PERMISSIONS = DEFAULT_CREATE_MODE
-  {% end %}
 
   # Ensures the content written to the file descriptor is written completely or not at all
   # preventing corruption of the file.
@@ -43,19 +39,10 @@ class File
       raise ex
     end
 
-    # FIXME: Remove support for 0.24.2 and earlier
-    {% if compare_versions(Crystal::VERSION, "0.25.0") == -1 %}
-      if exists?(path)
-        info = stat(path)
-        chmod(atomic_path, info.mode)
-        chown(atomic_path, info.uid, info.gid)
-      end
-    {% else %}
-      if info = info?(path)
-        chmod(atomic_path, info.permissions)
-        chown(atomic_path, info.owner, info.group)
-      end
-    {% end %}
+    if info = info?(path)
+      chmod(atomic_path, info.permissions)
+      chown(atomic_path, info.owner, info.group)
+    end
 
     rename(atomic_path, path)
   end
