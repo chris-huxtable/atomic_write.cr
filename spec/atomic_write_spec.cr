@@ -55,5 +55,19 @@ describe File do
         File.delete(copyname)
       end
     end
+
+    it "replaces atomically" do
+      filename = File.tempfile("atomic_write").path
+      begin
+        File.write(filename, "world")
+        File.atomic_replace(filename) do |src, dst|
+          dst << "hello "
+          IO.copy src, dst
+        end
+        File.read(filename).should eq("hello world")
+      ensure
+        File.delete(filename)
+      end
+    end
   end
 end
