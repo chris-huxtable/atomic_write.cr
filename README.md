@@ -45,6 +45,12 @@ Atomic copy:
 File.atomic_copy("some/src/path", "some/dst/path")
 ```
 
+Atomic replace:
+
+```crystal
+File.atomic_replace("some/src/path") { |src_fd, dst_fd| dst_fd << "hello" << src_fd.gets_to_end }
+```
+
 
 ## Contributing
 

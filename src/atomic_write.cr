@@ -68,4 +68,13 @@ class File
   def self.atomic_copy(src : String, dst : String, perm = DEFAULT_CREATE_PERMISSIONS) : Nil
     open(src, "r") { |src_fd| atomic_write(dst, src_fd, perm) }
   end
+
+  # Allows reading from the original file and atomically replacing using #atomic_write.
+  def self.atomic_replace(path : String, perm = DEFAULT_CREATE_PERMISSIONS, encoding = nil, invalid = nil, &block : (IO::FileDescriptor, IO::FileDescriptor) -> Nil) : Nil
+    open(path) do |src_fd|
+      atomic_write(path, perm, encoding, invalid) do |dst_fd|
+        block.call(src_fd, dst_fd)
+      end
+    end
+  end
 end
