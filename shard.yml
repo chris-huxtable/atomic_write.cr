@@ -2,7 +2,7 @@ name: atomic_write
 version: 0.1.4
 license: ISC
 
-crystal: 0.25.1
+crystal: ">= 0.35"
 
 authors:
   - Chris Huxtable <chris@huxtable.ca>

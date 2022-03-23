@@ -23,7 +23,8 @@ class File
   # This is done by saving the new contents at temporary path. When the new content is
   # successfully written the temporary path is changed to the provided path ensuring the data is
   # not corrupted. If the write fails the temporary file is deleted.
-  def self.atomic_write(path : String, perm = DEFAULT_CREATE_PERMISSIONS, encoding = nil, invalid = nil, *, append : Bool = false, &block : IO::FileDescriptor -> Nil) : Nil
+  def self.atomic_write(path : Path | String, perm = DEFAULT_CREATE_PERMISSIONS, encoding = nil, invalid = nil, *, append : Bool = false, &block : IO::FileDescriptor -> Nil) : Nil
+    path = path.to_s
     atomic_path = "#{path}.atomic_#{Random::Secure.urlsafe_base64(16)}"
     raise "Failed to generate temporary path, exists" if exists?(atomic_path)
 
@@ -40,7 +41,7 @@ class File
 
     if info = info?(path)
       chmod(atomic_path, info.permissions)
-      chown(atomic_path, info.owner, info.group)
+      chown(atomic_path, info.owner_id.to_i, info.group_id.to_i)
     end
 
     rename(atomic_path, path)
