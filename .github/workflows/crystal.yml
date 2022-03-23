@@ -28,8 +28,8 @@ jobs:
       image: crystallang/crystal:${{ matrix.crystal }}
 
     steps:
-    - name: Install dependencies
-      run: shards install
+#    - name: Install dependencies
+#      run: shards install
     - name: Run tests
       run: crystal spec -Dpreview_mt --order random --error-on-warnings
     - name: Run format
