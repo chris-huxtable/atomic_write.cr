@@ -1,11 +1,10 @@
+---
 name: atomic_write
-version: 0.1.4
+version: 0.2.0
 license: ISC
-
 crystal: ">= 0.35"
-
 authors:
-  - Chris Huxtable <chris@huxtable.ca>
+- Chris Huxtable <chris@huxtable.ca>
+description: 'Extends `File` to provide `atomic_write()`, `atomic_replace()`
 
-description: |
-  Extends `File` to provide `atomic_write()`
+  '
